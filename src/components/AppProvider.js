@@ -5,7 +5,7 @@ export const AppContext = createContext()
 const initialState = {
   auth: false,
   refetch: 0,
-  punches: [],
+  punches: [{ fields: {} }],
   user: null
 }
 

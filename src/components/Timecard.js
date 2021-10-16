@@ -43,13 +43,13 @@ function Timecard () {
       <h2>Hello, {user}</h2>
       {apiCallDone ? (
         <DayGroup
-          inOutNext={punches[0].fields['Punch Type'] === 'In' ? 'Out' : 'In'}
+          inOutNext={punches[0]?.fields['Punch Type'] === 'In' ? 'Out' : 'In'}
         />
       ) : (
         'Loading...'
       )}
       <br />
-      {punches.map(p => (
+      {punches?.map(p => (
         <div>{`${p.fields['Punch Time']} (${p.fields['Punch Type']})`}</div>
       ))}
     </div>
