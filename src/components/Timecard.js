@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Airtable from 'airtable'
+import { DateTime } from 'luxon'
 import { useApp } from './AppProvider'
 import DayGroup from './DayGroup'
 
@@ -50,9 +51,12 @@ function Timecard () {
       )}
       <br />
       {punches?.map((p, ind) => (
-        <div
-          key={ind}
-        >{`${p.fields['Punch Time']} (${p.fields['Punch Type']})`}</div>
+        <div className='TimeCard-TimeBlock' key={ind}>
+          {`${DateTime.fromISO(p.fields['Punch Time']).toFormat(
+            'MM-dd-yyyy HH:mm'
+          )} (${p.fields['Punch Type']})`}
+          <hr />
+        </div>
       ))}
     </div>
   )

@@ -1,3 +1,7 @@
 .TimeCard {
   margin-left: 5%;
 }
+
+.TimeCard-TimeBlock {
+  width: 30%;
+}
