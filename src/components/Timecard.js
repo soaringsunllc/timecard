@@ -7,7 +7,7 @@ import '../styles/TimeCard.css'
 
 function Timecard () {
   const [apiCallDone, setApiCallDone] = useState(false)
-  const { punches, refetch, user, dispatch } = useApp()
+  const { empName, punches, refetch, user, dispatch } = useApp()
 
   useEffect(() => {
     const base = new Airtable({ apiKey: localStorage['api_key'] }).base(
@@ -40,7 +40,7 @@ function Timecard () {
 
   return (
     <div className='TimeCard'>
-      <h2>Hello, {user}</h2>
+      <h2>Hello, {empName?.split(' ')[0]}</h2>
       {apiCallDone ? (
         <DayGroup
           inOutNext={punches[0]?.fields['Punch Type'] === 'In' ? 'Out' : 'In'}
@@ -49,8 +49,10 @@ function Timecard () {
         'Loading...'
       )}
       <br />
-      {punches?.map(p => (
-        <div>{`${p.fields['Punch Time']} (${p.fields['Punch Type']})`}</div>
+      {punches?.map((p, ind) => (
+        <div
+          key={ind}
+        >{`${p.fields['Punch Time']} (${p.fields['Punch Type']})`}</div>
       ))}
     </div>
   )

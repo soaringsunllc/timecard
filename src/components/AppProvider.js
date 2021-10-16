@@ -4,6 +4,7 @@ export const AppContext = createContext()
 
 const initialState = {
   auth: false,
+  empName: null,
   refetch: 0,
   punches: [{ fields: {} }],
   user: null
@@ -13,6 +14,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'SET_USER':
       return { ...state, user: action.payload }
+    case 'SET_NAME':
+      return { ...state, empName: action.payload }
     case 'SET_AUTH':
       return { ...state, auth: action.payload }
     case 'SET_PUNCHES':

@@ -38,7 +38,7 @@ function Authentication () {
         // Selecting the first 3 records in Grid view:
         maxRecords: 1,
         view: 'Grid view',
-        fields: ['Emp Username', 'Emp Password'],
+        fields: ['Emp Username', 'Emp Password', 'Emp Name'],
         filterByFormula: `{Emp Username}='${user}'`
       })
       .eachPage(
@@ -49,6 +49,10 @@ function Authentication () {
           ) {
             if (records[0].fields['Emp Password'] === password) {
               dispatch({ type: 'SET_AUTH', payload: true })
+              dispatch({
+                type: 'SET_NAME',
+                payload: records[0].fields['Emp Name']
+              })
               localStorage['auth_until'] = Date.now() + 1000 * 60 * 60 //authenticated for one hour
               localStorage['user'] = user
             }
@@ -71,7 +75,7 @@ function Authentication () {
             <label>Username</label>
             <Input
               placeholder='Username'
-              onChange={e =>
+              onBlur={e =>
                 dispatch({ type: 'SET_USER', payload: e.target.value })
               }
             />
@@ -92,7 +96,6 @@ function Authentication () {
           </Button>
         </Form>
       </Card>
-      {user}
       <ApiCapture />
     </>
   )

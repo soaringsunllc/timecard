@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from 'semantic-ui-react'
 import Airtable from 'airtable'
 import { useApp } from './AppProvider'
 
 const TimeField = ({ inOut }) => {
   const { user, dispatch } = useApp()
+  const [makeDisabled, setMakeDisabled] = useState(false)
 
   const uCS = () => {
+    setMakeDisabled(true)
+
     navigator.geolocation.getCurrentPosition(
       position => {
         const {
@@ -30,9 +33,10 @@ const TimeField = ({ inOut }) => {
               }
             }
           ],
-          (err, records) => {
+          err => {
             if (err) return alert(err)
             dispatch({ type: 'UPDATE_REFETCH', payload: true })
+            setMakeDisabled(false)
           }
         )
       },
@@ -50,6 +54,7 @@ const TimeField = ({ inOut }) => {
         primary={inOut === 'In'}
         secondary={inOut === 'Out'}
         onClick={uCS.bind(this, inOut)}
+        disabled={makeDisabled}
       >
         Clock {inOut}
       </Button>
