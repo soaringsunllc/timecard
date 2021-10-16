@@ -1,6 +1,5 @@
 .DayGroup {
-    border: 1px black solid;
-    width: 590px;
-    border-radius: 5px;
-    padding: 8px;
+  width: 590px;
+  border-radius: 5px;
+  padding: 8px;
 }

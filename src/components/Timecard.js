@@ -1,23 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react'
+import Airtable from 'airtable'
+import { useApp } from './AppProvider'
+import DayGroup from './DayGroup'
 
-import DayGroup from './DayGroup';
+import '../styles/TimeCard.css'
 
+function Timecard () {
+  const [apiCallDone, setApiCallDone] = useState(false)
+  const { punches, refetch, user, dispatch } = useApp()
 
-function Timecard({ user }) {
-    const [timeObj, setTimeObj] = useState(localStorage['timecard'] ? JSON.parse(localStorage['timecard']) : {});
-
-    const updateTimeObj = newObj => {
-        localStorage['timecard'] = JSON.stringify(newObj);
-
-        setTimeObj(newObj);
-    }
-
-    return (
-        <div>
-            <DayGroup />
-            <input type="button" value="Add Day" />
-        </div>
+  useEffect(() => {
+    const base = new Airtable({ apiKey: localStorage['api_key'] }).base(
+      'app7hR5UDZ4st97XS'
     )
+
+    base('Punch Times')
+      .select({
+        maxRecords: 20,
+        view: 'Grid view',
+        sort: [{ field: 'ID', direction: 'desc' }],
+        filterByFormula: `AND(Username = "${user}")`
+      })
+      .eachPage(
+        function page (records, fetchNextPage) {
+          setApiCallDone(true)
+
+          dispatch({ type: 'SET_PUNCHES', payload: records })
+
+          fetchNextPage()
+        },
+        function done (err) {
+          if (err) {
+            console.error(err)
+            return
+          }
+        }
+      )
+  }, [refetch, user, dispatch])
+
+  return (
+    <div className='TimeCard'>
+      <h2>Hello, {user}</h2>
+      {apiCallDone ? (
+        <DayGroup
+          inOutNext={punches[0].fields['Punch Type'] === 'In' ? 'Out' : 'In'}
+        />
+      ) : (
+        'Loading...'
+      )}
+      <br />
+      {punches.map(p => (
+        <div>{`${p.fields['Punch Time']} (${p.fields['Punch Type']})`}</div>
+      ))}
+    </div>
+  )
 }
 
-export default Timecard;
+export default Timecard

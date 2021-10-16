@@ -1,44 +1,40 @@
-import React, { useState } from 'react'
-import { Input, Button } from 'semantic-ui-react'
+import React from 'react'
+import { Button } from 'semantic-ui-react'
 import Airtable from 'airtable'
-import API from '../config/API'
-import moment from 'moment'
+import { useApp } from './AppProvider'
 
-const TimeField = () => {
-  const [time, setTime] = useState(null)
+const TimeField = ({ inOut }) => {
+  const { user, dispatch } = useApp()
 
-  const uCS = punch_type => {
+  const uCS = () => {
     navigator.geolocation.getCurrentPosition(
       position => {
-        //const timeObj = JSON.parse(timeStr);
         const {
           coords: { latitude, longitude },
           timestamp
         } = position
 
-        const base = new Airtable({ apiKey: API.key }).base('app7hR5UDZ4st97XS')
+        const base = new Airtable({ apiKey: localStorage['api_key'] }).base(
+          'app7hR5UDZ4st97XS'
+        )
 
         base('Punch Times').create(
           [
             {
               fields: {
-                Username: 'msorenson',
+                Username: user,
                 'Punch Time': timestamp,
                 'Punch Latitude': latitude,
                 'Punch Longitude': longitude,
-                'Punch Type': punch_type
+                'Punch Type': inOut
               }
             }
           ],
           (err, records) => {
             if (err) return alert(err)
-            setTime(new Date(timestamp))
-            records.forEach(r => console.log(r))
+            dispatch({ type: 'UPDATE_REFETCH', payload: true })
           }
         )
-
-        // timeObj[Date.now().toString()] = { latitude, longitude, timestamp, user };
-        // updateTimeObj(timeObj);
       },
       err => {
         console.log(err)
@@ -49,16 +45,15 @@ const TimeField = () => {
   }
 
   return (
-    <div>
-      <Input readOnly value={time} />
-      <Button primary onClick={uCS.bind(this, 'In')}>
-        Clock In
+    <>
+      <Button
+        primary={inOut === 'In'}
+        secondary={inOut === 'Out'}
+        onClick={uCS.bind(this, inOut)}
+      >
+        Clock {inOut}
       </Button>
-      <Input readOnly value={'val'} />
-      <Button color='red' onClick={uCS.bind(this, 'Out')}>
-        Clock Out
-      </Button>
-    </div>
+    </>
   )
 }
 

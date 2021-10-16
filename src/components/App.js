@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
-import 'semantic-ui-css/semantic.min.css';
+import React from 'react'
+import 'semantic-ui-css/semantic.min.css'
+import AppProvider from './AppProvider'
+import AppRouter from './AppRouter'
+import '../styles/Authentication.css'
 
-import Authentication from './Authentication';
-import Timecard from './Timecard';
-import '../styles/Authentication.css';
-
-function App() {
-  const [auth, setAuth] = useState(false);
-  const [user, setUser] = useState('');
-
+function App () {
   return (
-    !auth ? 
-    <Authentication user={user} setUser={setUser} setAuth={setAuth} /> :
-    <Timecard user={user} />
-  );
+    <AppProvider>
+      <AppRouter />
+    </AppProvider>
+  )
 }
 
-export default App;
+export default App
